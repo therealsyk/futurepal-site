@@ -1,5 +1,5 @@
-FuturePal — avisos de software de terceiros / third-party software notices
-Gerado em 2026-11-22 · 100 bibliotecas
+MyFuturePal — avisos de software de terceiros / third-party software notices
+Gerado em 2026-11-24 · 100 bibliotecas
 
 ==============================================================================
 @capacitor-community/admob 8.4.2 — MIT

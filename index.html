@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>FuturePal · o teu caderno de despesas</title>
-<meta name="description" content="FuturePal: a app simples para registar despesas, ver para onde vai o teu dinheiro e poupar para o que importa. Windows, Android e iPhone.">
+<title>MyFuturePal · o teu caderno de despesas</title>
+<meta name="description" content="MyFuturePal: a app simples para registar despesas, ver para onde vai o teu dinheiro e poupar para o que importa. Windows, Android e iPhone.">
 <meta name="theme-color" content="#000000">
 <link rel="icon" type="image/svg+xml" href="favicon.svg">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
@@ -88,13 +88,19 @@
   .hero.pc .stores, .hero.pc .trust { justify-content: center; }
   .hero.pc .phone { width: min(1100px, 100%); padding: 12px 12px 14px; border-radius: 18px; background: #0d0f10; }
   .hero.pc .phone::after { content: ""; position: absolute; left: -6%; right: -6%; bottom: -16px; height: 16px; border-radius: 0 0 18px 18px; background: linear-gradient(#22282a, #111415); box-shadow: 0 18px 30px -12px rgba(0,0,0,.8); }
-  .hero.pc .screen { aspect-ratio: 1920 / 1080; border-radius: 8px; }
-  .hero.pc .screen iframe { width: 1920px; height: 1080px; }
   .hero.pc .phone-wrap { margin-top: 10px; }
   .hero.pc .try { margin-top: 18px; }
-  /* a app é desenhada com a largura de um telemóvel real (390 px) e reduzida para caber na moldura */
+  /* a app é desenhada com a largura real de cada aparelho e reduzida para caber na moldura */
   .screen { position: relative; width: 100%; aspect-ratio: 390 / 844; border-radius: 38px; overflow: hidden; background: #0a0a0d; }
   .screen iframe { position: absolute; left: 0; top: 0; width: 390px; height: 844px; border: 0; transform-origin: 0 0; transform: scale(var(--k, .764)); }
+  .screen.pcs { display: none; aspect-ratio: 1920 / 1080; border-radius: 8px; }
+  .screen.pcs iframe { width: 1920px; height: 1080px; opacity: 0; transition: opacity .35s ease; }
+  .screen.pcs.ready iframe { opacity: 1; }
+  .screen.ph:not(.on), .screen.pcs:not(.on) { display: none; }
+  .screen.pcs.on { display: block; }
+  .screen-load { position: absolute; inset: 0; background: linear-gradient(100deg, #0a0a0d 30%, #14181a 50%, #0a0a0d 70%); background-size: 200% 100%; animation: fp-shim 1.2s linear infinite; }
+  .screen.pcs.ready .screen-load { display: none; }
+  @keyframes fp-shim { to { background-position: -200% 0; } }
   .try { margin: 0; display: inline-flex; align-items: center; gap: 8px; color: var(--muted); font-size: 14px; }
   .try svg { width: 18px; height: 18px; color: var(--brand); }
   .pulse { animation: fp-pulse 1.2s ease 2; }
@@ -191,6 +197,162 @@
   .reveal { opacity: 0; transform: translateY(22px); transition: opacity .7s ease, transform .7s ease; }
   .reveal.in { opacity: 1; transform: none; }
 
+
+  /* ---------- como funciona: 3 passos */
+  .steps-sec { padding: 28px 0 8px; }
+  .steps { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+  .steps li { display: flex; gap: 14px; align-items: flex-start; padding: 18px; border-radius: 18px; background: var(--card); border: 1px solid var(--line); transition: border-color .2s, transform .2s; }
+  .steps li:hover { border-color: rgba(23,195,201,.4); transform: translateY(-2px); }
+  .st-n { display: grid; place-items: center; width: 34px; height: 34px; flex: none; border-radius: 11px; background: var(--brand-soft); color: var(--brand); font-weight: 700; }
+  .steps b { display: block; font-size: 17px; margin-bottom: 2px; } .steps small { color: var(--muted); font-size: 14.5px; line-height: 1.45; }
+  /* ---------- funcionalidades em mosaico */
+  .feat-sec { padding: 72px 0 40px; }
+  .bento { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+  .bx { position: relative; display: flex; flex-direction: column; gap: 6px; padding: 20px; border-radius: 20px; background: var(--card); border: 1px solid var(--line); overflow: hidden; transition: border-color .2s, transform .2s; }
+  .bx:hover { border-color: var(--line-2); transform: translateY(-3px); }
+  .bx h3 { margin: 0; font-size: 17px; font-weight: 650; letter-spacing: -.01em; } .bx p { margin: 0; color: var(--muted); font-size: 14.5px; line-height: 1.5; }
+  .bx.big { grid-column: span 2; grid-row: span 2; padding: 24px; background: radial-gradient(90% 70% at 100% 0%, rgba(23,195,201,.16), transparent 60%), var(--card); }
+  .bx.big h3 { font-size: 22px; } .bx.big p { font-size: 15.5px; max-width: 460px; }
+  .bx-tag { align-self: flex-start; padding: 3px 10px; border-radius: 99px; background: var(--brand-soft); color: var(--brand); font-size: 12px; font-weight: 700; margin-bottom: 4px; }
+  .mini-plan { margin-top: auto; padding-top: 16px; display: grid; gap: 8px; }
+  .mp-bar { display: flex; height: 12px; border-radius: 99px; overflow: hidden; gap: 3px; margin-bottom: 4px; }
+  .mp-bar i { display: block; border-radius: 3px; transform-origin: left; animation: fp-grow 1s cubic-bezier(.2,.8,.2,1) both; }
+  .mp-bar .a { flex: 28; background: #f87171; } .mp-bar .b { flex: 13; background: #f5b85a; animation-delay: .1s; } .mp-bar .c { flex: 12; background: #8b93ff; animation-delay: .2s; } .mp-bar .d { flex: 47; background: var(--brand); animation-delay: .3s; }
+  .mp-row { display: flex; justify-content: space-between; gap: 10px; padding: 10px 12px; border-radius: 12px; background: var(--bg-2); border: 1px solid var(--line); font-size: 14px; }
+  .mp-row b { color: var(--pos); } .mp-row.mid span { color: var(--warn); } .mp-row.hard span { color: #f87171; } .mp-row.ok span { color: var(--pos); }
+  .mini-files { margin-top: auto; padding-top: 10px; display: flex; flex-wrap: wrap; gap: 6px; }
+  .mini-files span { padding: 5px 9px; border-radius: 9px; border: 1px dashed rgba(23,195,201,.45); background: var(--bg-2); font-size: 12.5px; font-weight: 600; }
+  .mini-ring { position: relative; margin: auto 0 0; width: 84px; height: 84px; border-radius: 50%; background: conic-gradient(var(--brand) 0 68%, #1c2021 68% 100%); display: grid; place-items: center; align-self: flex-start; }
+  .mini-ring i { position: absolute; inset: 9px; border-radius: 50%; background: var(--card); }
+  .mini-ring b, .mini-ring small { position: relative; line-height: 1; } .mini-ring b { font-size: 18px; margin-top: 14px; } .mini-ring small { font-size: 10.5px; color: var(--muted); margin-top: -18px; }
+  .mini-lims { margin-top: auto; padding-top: 10px; display: grid; gap: 8px; }
+  .mini-lims div { display: grid; gap: 4px; font-size: 12.5px; color: var(--muted); }
+  .mini-lims i { display: block; height: 6px; border-radius: 99px; background: linear-gradient(90deg, var(--brand) var(--w), #1c2021 var(--w)); }
+  .mini-lims i.w { background: linear-gradient(90deg, var(--warn) var(--w), #1c2021 var(--w)); }
+  .mini-sw { margin-top: auto; padding-top: 10px; display: grid; gap: 6px; }
+  .mini-sw div { display: flex; justify-content: space-between; align-items: center; padding: 7px 10px; border-radius: 10px; background: var(--bg-2); font-size: 13px; }
+  .mini-sw i { width: 30px; height: 18px; border-radius: 99px; background: #262b2c; position: relative; transition: background .2s; }
+  .mini-sw i::after { content: ""; position: absolute; top: 3px; left: 3px; width: 12px; height: 12px; border-radius: 50%; background: #fff; transition: transform .2s; }
+  .mini-sw i.on { background: var(--pos); } .mini-sw i.on::after { transform: translateX(12px); }
+  .bx.rec:hover .mini-sw div:last-child i { background: var(--pos); } .bx.rec:hover .mini-sw div:last-child i::after { transform: translateX(12px); }
+  @keyframes fp-grow { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+  /* ---------- privacidade numa faixa */
+  .priv-sec { padding: 40px 0; }
+  .priv { display: grid; grid-template-columns: .9fr 1.1fr; gap: 28px; align-items: center; padding: 28px; border-radius: 24px; background: var(--card); border: 1px solid var(--line); }
+  .priv h2 { margin: 0; font-size: clamp(26px, 3vw, 34px); }
+  .priv ul { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 12px 18px; }
+  .priv li { display: flex; gap: 10px; align-items: flex-start; font-size: 14.5px; color: var(--muted); line-height: 1.45; }
+  .priv li b { color: var(--text); font-weight: 600; } .priv li svg { width: 18px; height: 18px; flex: none; margin-top: 2px; color: var(--brand); }
+  #perguntas { padding: 56px 0; } #descarregar { padding: 40px 0 72px; }
+  @media (max-width: 960px) {
+    .steps { grid-template-columns: 1fr; } .bento { grid-template-columns: 1fr 1fr; } .bx.big { grid-column: 1 / -1; grid-row: auto; }
+    .priv { grid-template-columns: 1fr; } }
+  @media (max-width: 560px) { .bento { grid-template-columns: 1fr; } .priv ul { grid-template-columns: 1fr; } .feat-sec { padding: 52px 0 24px; } }
+  @media (prefers-reduced-motion: reduce) { .mp-bar i, .screen-load { animation: none; } }
+
+  /* ===== versão arejada (substitui a compacta) ===== */
+  .steps-sec { padding: 84px 0 24px !important; }
+  .steps { gap: 18px !important; margin-top: 8px; }
+  .steps li { flex-direction: column; gap: 10px !important; padding: 26px !important; border-radius: 22px !important; }
+  .st-n { width: 42px !important; height: 42px !important; border-radius: 13px !important; font-size: 18px; }
+  .steps b { font-size: 20px !important; } .steps small { font-size: 16px !important; line-height: 1.55 !important; }
+  .feat-sec { padding: 84px 0 40px !important; }
+  .showcase { display: grid; grid-template-columns: 1.05fr .95fr; gap: 40px; align-items: center; padding: 36px; margin-bottom: 22px; border-radius: 28px;
+    background: radial-gradient(80% 90% at 100% 0%, rgba(23,195,201,.16), transparent 60%), var(--card); border: 1px solid var(--line); }
+  .sc-tx h3 { margin: 6px 0 14px; font-size: clamp(26px, 3vw, 34px); line-height: 1.12; letter-spacing: -.03em; }
+  .sc-tx p { margin: 0 0 12px; color: var(--muted); font-size: 17px; line-height: 1.6; max-width: 520px; }
+  .sc-vis { padding: 22px; border-radius: 22px; background: var(--bg-2); border: 1px solid var(--line); }
+  .sc-vis .mini-plan { margin: 0; padding: 0; gap: 10px; }
+  .mp-head { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 4px; color: var(--muted); font-size: 14px; }
+  .mp-head b { color: #f87171; font-size: 20px; }
+  .mp-row { padding: 13px 14px !important; font-size: 15px !important; }
+  .bento { grid-template-columns: repeat(3, 1fr) !important; gap: 18px !important; }
+  .bx { padding: 26px !important; gap: 10px !important; border-radius: 22px !important; min-height: 230px; }
+  .bx h3 { font-size: 19px !important; line-height: 1.25; } .bx p { font-size: 15.5px !important; line-height: 1.6 !important; }
+  .bento > .bx:last-child:nth-child(3n+1) { grid-column: 1 / -1; min-height: 0; }
+  .mini-grp { margin-top: auto; padding-top: 12px; display: flex; align-items: center; }
+  .mini-grp span { display: grid; place-items: center; width: 32px; height: 32px; margin-right: -8px; border-radius: 50%; border: 2px solid var(--card); background: #1d4e51; color: #bff3f5; font-size: 13px; font-weight: 700; }
+  .mini-grp span:nth-child(2) { background: #3b3f7a; color: #d5d8ff; } .mini-grp span:nth-child(3) { background: #5a4420; color: #ffe1b0; }
+  .mini-grp em { margin-left: 18px; font-style: normal; color: var(--muted); font-size: 13.5px; }
+  .mini-sim { margin-top: auto; padding: 11px 13px; display: flex; justify-content: space-between; align-items: center; border-radius: 12px; background: var(--bg-2); border: 1px solid var(--line); font-size: 14px; }
+  .mini-sim b { padding: 3px 10px; border-radius: 99px; background: rgba(94,224,160,.14); color: var(--pos); font-size: 12.5px; }
+  .mini-note { margin-top: auto; padding: 11px 13px; display: flex; align-items: center; gap: 10px; border-radius: 12px; background: var(--bg-2); border: 1px solid var(--line); font-size: 14px; color: var(--muted); }
+  .mini-note i { width: 9px; height: 9px; border-radius: 50%; background: var(--warn); box-shadow: 0 0 0 0 rgba(245,184,90,.6); animation: fp-ping 1.8s ease-out infinite; }
+  @keyframes fp-ping { 70%, 100% { box-shadow: 0 0 0 8px rgba(245,184,90,0); } }
+  .mini-files span { font-size: 13px !important; padding: 6px 10px !important; }
+  .mini-ring { width: 96px !important; height: 96px !important; }
+  .priv-sec { padding: 64px 0 !important; }
+  .priv { padding: 36px !important; gap: 36px !important; border-radius: 28px !important; }
+  .priv li { font-size: 16px !important; }
+  #perguntas { padding: 72px 0 !important; } #descarregar { padding: 48px 0 88px !important; }
+  @media (max-width: 960px) { .showcase { grid-template-columns: 1fr; padding: 26px; gap: 24px; } .bento { grid-template-columns: 1fr 1fr !important; } .steps li { padding: 22px !important; } }
+  @media (max-width: 600px) { .bento { grid-template-columns: 1fr !important; } .bx { min-height: 0; } .priv { padding: 24px !important; } .showcase { padding: 22px; } .steps-sec { padding: 56px 0 16px !important; } }
+
+  /* ===== funcionalidades em secções (uma ideia de cada vez) ===== */
+  .frow { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: center; padding: 44px 8px; border-top: 1px solid var(--line); }
+  .showcase.frow { padding: 36px; border-top: 1px solid var(--line); margin-bottom: 8px; }
+  .frow.rev .fr-tx { order: 2; }
+  .fr-lab { display: inline-block; margin-bottom: 10px; padding: 4px 12px; border-radius: 99px; background: var(--brand-soft); color: var(--brand); font-size: 12.5px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; }
+  .fr-tx h3 { margin: 0 0 12px; font-size: clamp(24px, 2.8vw, 32px); line-height: 1.15; letter-spacing: -.03em; }
+  .fr-tx p { margin: 0 0 16px; color: var(--muted); font-size: 17px; line-height: 1.6; max-width: 480px; }
+  .fr-tx ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+  .fr-tx li { display: flex; align-items: center; gap: 9px; font-size: 15.5px; }
+  .fr-tx li svg { width: 18px; height: 18px; color: var(--brand); flex: none; }
+  .fr-vis { display: flex; flex-direction: column; gap: 12px; padding: 24px; border-radius: 24px; background: radial-gradient(90% 80% at 100% 0%, rgba(23,195,201,.10), transparent 60%), var(--card); border: 1px solid var(--line); transition: transform .3s, border-color .3s; }
+  .frow:hover .fr-vis { transform: translateY(-4px); border-color: var(--line-2); }
+  .fr-vis .mini-files, .fr-vis .mini-lims, .fr-vis .mini-sw, .fr-vis .mini-grp, .fr-vis .mini-note { margin-top: 0 !important; padding-top: 0 !important; }
+  .v-rows { display: grid; gap: 8px; }
+  .v-rows div { display: grid; grid-template-columns: 1fr auto; padding: 10px 13px; border-radius: 12px; background: var(--bg-2); border: 1px solid var(--line); }
+  .v-rows b { font-size: 14.5px; } .v-rows small { grid-column: 1; color: var(--muted); font-size: 12.5px; } .v-rows em { grid-row: 1 / 3; grid-column: 2; align-self: center; font-style: normal; font-weight: 700; color: #f87171; } .v-rows em.in { color: var(--pos); }
+  .v-goal { display: grid; grid-template-columns: auto 1fr; gap: 22px; align-items: center; }
+  .v-goal .mini-ring { margin: 0; }
+  .v-save { display: flex; justify-content: space-between; align-items: baseline; padding: 12px 14px; border-radius: 14px; background: rgba(94,224,160,.08); border: 1px solid rgba(94,224,160,.25); }
+  .v-save small { color: var(--muted); } .v-save b { color: var(--pos); font-size: 20px; }
+  .fr-vis .mini-sw div { padding: 10px 12px; font-size: 14.5px; }
+  .feat-cta { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 16px 24px; margin-top: 24px; padding: 28px; border-radius: 24px; border: 1px dashed rgba(23,195,201,.35); text-align: center; }
+  .feat-cta p { margin: 0; font-size: 18px; font-weight: 600; }
+  @media (max-width: 960px) { .frow { grid-template-columns: 1fr; gap: 22px; padding: 32px 0; } .frow.rev .fr-tx { order: 0; } .showcase.frow { padding: 24px; } }
+
+  /* ===== barra de scroll fina como na app ===== */
+  html { scrollbar-width: thin; scrollbar-color: rgba(255,255,255,.14) transparent; }
+  ::-webkit-scrollbar { width: 6px; height: 6px; } ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: rgba(255,255,255,.12); border-radius: 99px; } ::-webkit-scrollbar-thumb:hover { background: rgba(23,195,201,.55); }
+  /* ===== menos scroll: espaços mais curtos entre secções ===== */
+  .hero { padding: 118px 0 56px !important; }
+  section { padding: 64px 0; }
+  .steps-sec { padding: 56px 0 8px !important; }
+  .feat-sec { padding: 56px 0 24px !important; }
+  .sub { margin-bottom: 32px; }
+  .priv-sec { padding: 40px 0 !important; } #perguntas { padding: 48px 0 !important; } #descarregar { padding: 32px 0 64px !important; }
+  .final { padding: 52px 28px 28px !important; } .stats { margin-top: 36px !important; }
+  /* ===== separadores das funcionalidades ===== */
+  .ftabs { margin-top: 22px; padding: 22px; border-radius: 28px; background: var(--card); border: 1px solid var(--line); }
+  .ft-bar { position: relative; display: flex; gap: 4px; width: max-content; max-width: 100%; margin: 0 auto 8px; padding: 5px; border-radius: 999px; background: var(--bg-2); border: 1px solid var(--line-2); overflow-x: auto; scrollbar-width: none; }
+  .ft-bar::-webkit-scrollbar { display: none; }
+  .ft-pill { position: absolute; top: 5px; left: 0; bottom: 5px; border-radius: 999px; background: var(--brand-soft); box-shadow: inset 0 0 0 1px rgba(23,195,201,.45); transition: transform .4s cubic-bezier(.3,1.2,.5,1), width .4s cubic-bezier(.3,1.2,.5,1); pointer-events: none; }
+  .ft-bar button { position: relative; display: inline-flex; align-items: center; gap: 8px; height: 42px; padding: 0 18px; border: 0; border-radius: 999px; background: none; color: var(--muted); font: inherit; font-size: 15px; font-weight: 600; cursor: pointer; white-space: nowrap; transition: color .2s; }
+  .ft-bar button svg { width: 17px; height: 17px; } .ft-bar button.on { color: var(--text); } .ft-bar button.on svg { color: var(--brand); }
+  .ft-panels { position: relative; }
+  .ft-panels .frow { display: none; border-top: 0; padding: 22px 8px 8px; }
+  .ft-panels .frow.on { display: grid; animation: ft-in .5s cubic-bezier(.2,.8,.2,1) both; }
+  @keyframes ft-in { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+  .ft-prog { height: 3px; margin: 16px auto 0; max-width: 220px; border-radius: 99px; background: var(--line); overflow: hidden; }
+  .ft-prog i { display: block; height: 100%; width: 0; border-radius: 99px; background: var(--brand); }
+  .ftabs.run .ft-prog i { animation: ft-prog 7s linear both; }
+  @keyframes ft-prog { to { width: 100%; } }
+  .showcase.frow { margin-bottom: 0 !important; }
+  .feat-cta { margin-top: 18px !important; padding: 22px !important; }
+  @media (max-width: 960px) { .ftabs { padding: 14px; } .ft-bar { margin: 0 0 6px; } .ft-panels .frow { padding: 18px 4px 4px; } }
+  @media (prefers-reduced-motion: reduce) { .ft-panels .frow.on, .ftabs.run .ft-prog i { animation: none; } }
+
+  /* afundar ao fazer scroll */
+  .sink { translate: 0 calc(var(--sk, 0) * 26px); scale: calc(1 - var(--sk, 0) * .07); filter: blur(calc(var(--sk, 0) * 3px)) brightness(calc(1 - var(--sk, 0) * .5)); transform-origin: 50% 0; will-change: translate, scale, filter; }
+  /* troca telemóvel/computador */
+  ::view-transition-old(root), ::view-transition-new(root) { animation-duration: .45s; animation-timing-function: cubic-bezier(.2,.8,.2,1); }
+  .screen.on { animation: dev-in .5s cubic-bezier(.2,.8,.2,1) both; }
+  @keyframes dev-in { from { opacity: 0; transform: scale(.97); } to { opacity: 1; transform: none; } }
+  .store .tag { margin-left: 8px; }
+
   @media (max-width: 960px) {
     nav.links { display: none; }
     .top .lang { margin-left: auto; }
@@ -230,14 +392,13 @@
 
 <header class="top" id="top">
   <div class="wrap">
-    <a class="logo" href="#inicio" aria-label="FuturePal, início">
+    <a class="logo" href="#inicio" aria-label="MyFuturePal, início">
       <img src="brand/futurepal-icon.svg" alt="" width="34" height="34">
-      FuturePal
+      MyFuturePal
     </a>
     <nav class="links" aria-label="Secções">
-      <a href="#funcoes">Funcionalidades</a>
-      <a href="#metas">Metas</a>
-      <a href="#orcamentos">Orçamentos</a>
+      <a href="#funcoes">Como funciona</a>
+      <a href="#tudo">Funcionalidades</a>
       <a href="#privacidade">Privacidade</a>
       <a href="#perguntas">Perguntas</a>
     </nav>
@@ -259,16 +420,16 @@
     <div class="wrap">
       <div>
         <h1 data-i18n-html="hero"><span class="line">Para onde vai</span><span class="line">o teu <span class="accent">dinheiro</span>?</span></h1>
-        <p class="lead">Regista o que gastas em segundos, vê o mês num só olhar e poupa para o que importa. Sem bancos ligados, sem complicações.</p>
+        <p class="lead">Regista um gasto em 3 segundos, vê se o próximo mês fecha bem e poupa para o que queres. Sem ligar o banco.</p>
         <div class="stores">
           <a class="store" href="https://github.com/therealsyk/futurepal/releases/latest" rel="noopener">
             <svg><use href="#i-win"/></svg><span><small>Descarregar para</small><b>Windows</b></span>
           </a>
-          <a class="store off" href="#descarregar" aria-disabled="true">
-            <svg><use href="#i-play"/></svg><span><small>Brevemente no</small><b>Google Play</b></span>
+          <a class="store" href="https://github.com/therealsyk/futurepal/releases/latest" rel="noopener">
+            <svg><use href="#i-play"/></svg><span><small>Descarregar para</small><b>Android</b></span>
           </a>
           <a class="store off" href="#descarregar" aria-disabled="true">
-            <svg><use href="#i-phone"/></svg><span><small>Brevemente na</small><b>App Store</b></span>
+            <svg><use href="#i-phone"/></svg><span><small>Brevemente na</small><b>App Store</b></span><em class="tag">iOS</em>
           </a>
         </div>
         <div class="trust">
@@ -284,145 +445,117 @@
           <button type="button" data-dev="pc" aria-pressed="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 5h16v11H4zM2 19h20"/></svg><span>Computador</span></button>
         </div>
         <div class="phone">
-          <div class="screen"><iframe id="demo" src="demo/index.html?lang=pt" title="Demonstração interativa da app FuturePal" loading="lazy"></iframe></div>
+          <div class="screen ph on"><iframe id="demo" src="demo/index.html?lang=pt" title="Demonstração interativa da app MyFuturePal" loading="lazy"></iframe></div>
+          <div class="screen pcs"><span class="screen-load" aria-hidden="true"></span></div>
         </div>
         <p class="try"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 11V5a2 2 0 0 1 4 0v6M13 10a2 2 0 0 1 4 0v1M17 11a2 2 0 0 1 4 0v4a6 6 0 0 1-6 6h-2a6 6 0 0 1-5-2.7L5 15a2 2 0 0 1 3.3-2.3L9 14"/></svg><span>Experimenta: toca na app</span></p>
       </div>
     </div>
   </div>
 
-  <div class="wrap divider"></div>
-
-  <!-- ======================================================= funcionalidades -->
-  <section id="funcoes">
-    <div class="wrap">
-      <div class="reveal">
-        <span class="eyebrow">Funcionalidades</span>
-        <h2>Registar despesas<br>nunca foi tão rápido.</h2>
-        <p class="sub">Toca no +, escreve o valor e está feito. Ou importa o extrato do banco e deixa o FuturePal arrumar tudo por categorias.</p>
-      </div>
-      <div class="split">
-        <div class="cards">
-          <div class="card reveal">
-            <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16v14H4zM4 10h16M8 3v4M16 3v4"/></svg></div>
-            <h3>Mapa de gastos</h3><p>Cada dia mostra quanto gastaste. Quanto mais forte a cor, mais saiu da carteira.</p>
-          </div>
-          <div class="card reveal">
-            <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12M7 10l5 5 5-5M5 21h14"/></svg></div>
-            <h3>Importar extratos</h3><p>CSV, Excel, OFX e PDF. Categorias sugeridas e salários detetados sozinhos.</p>
-          </div>
-          <div class="card reveal">
-            <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 2l4 4-4 4M3 11V9a3 3 0 0 1 3-3h15M7 22l-4-4 4-4M21 13v2a3 3 0 0 1-3 3H3"/></svg></div>
-            <h3>Despesas fixas</h3><p>Renda, ginásio, subscrições. Defines uma vez e entram todos os meses.</p>
-          </div>
-          <div class="card reveal">
-            <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM22 21v-2a4 4 0 0 0-3-3.9M16 3.1a4 4 0 0 1 0 7.8"/></svg></div>
-            <h3>Dividir contas</h3><p>Jantares e contas da casa divididos por igual, com quem já pagou e quem falta.</p>
-          </div>
-        </div>
-        <div class="panel reveal" aria-hidden="true">
-          <div class="ph"><span>Importar extrato</span><b>novembro.csv</b></div>
-          <div class="files"><span>extrato.csv</span><span>novembro.xlsx</span><span>banco.ofx</span><span>fatura.pdf</span></div>
-          <div class="row"><div class="grow"><b>PINGO DOCE LISBOA</b><small>15/11 · Supermercado</small></div><span class="chip">Novo</span></div>
-          <div class="row"><div class="grow"><b>TRF EMPRESA LDA</b><small>27/11 · Salário</small></div><span class="chip" style="background:rgba(94,224,160,.14);color:#5ee0a0">Salário</span></div>
-          <div class="row" style="opacity:.6"><div class="grow"><b>CAFÉ CENTRAL</b><small>18/11 · já registado</small></div><span class="chip" style="background:rgba(245,184,90,.14);color:#f5b85a">Repetido</span></div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ======================================================= metas -->
-  <section id="metas">
-    <div class="wrap">
-      <div class="reveal">
-        <span class="eyebrow">Metas</span>
-        <h2>Dá um destino<br>a cada euro.</h2>
-        <p class="sub">Escolhe para o que estás a poupar e acompanha o caminho. O FuturePal estima quando lá chegas, ao teu ritmo atual.</p>
-      </div>
-      <div class="split rev">
-        <div class="cards one">
-          <div class="card reveal">
-            <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/></svg></div>
-            <h3>Progresso e valor em falta</h3><p>Quanto já juntaste, quanto falta e as contas que contam para a meta.</p>
-          </div>
-          <div class="card reveal">
-            <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18M7 15l4-4 3 3 6-6"/></svg></div>
-            <h3>Previsão de conclusão</h3><p>Com base no que poupas por mês, vês a data provável em que chegas à meta.</p>
-          </div>
-        </div>
-        <div class="panel reveal" aria-hidden="true">
-          <div class="goal">
-            <div class="goal-ring"><div><b>68%</b><small>Férias 2027</small></div></div>
-            <div class="kv">
-              <div><span>Juntado</span><b>1 360 €</b></div>
-              <div><span>Falta</span><b>640 €</b></div>
-              <div><span>Chegas lá em</span><b class="accent">abril</b></div>
-            </div>
-          </div>
-          <div class="ph" style="margin-top:8px"><span>Poupança por mês</span><b>+160 €</b></div>
-          <div class="trend"><i style="height:40%"></i><i style="height:55%"></i><i style="height:48%"></i><i style="height:70%"></i><i style="height:62%"></i><i class="hi" style="height:86%"></i></div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ======================================================= orçamentos -->
-  <section id="orcamentos">
-    <div class="wrap">
-      <div class="split">
-        <div class="reveal" style="align-self:center">
-          <span class="eyebrow">Orçamentos</span>
-          <h2>Limites claros,<br>sem surpresas.</h2>
-          <p class="sub" style="margin-bottom:0">Escolhe as categorias que queres controlar e define quanto podes gastar. Vês logo onde estás e acertas o passo antes de passar do limite, mês a mês ou no ano inteiro.</p>
-        </div>
-        <div class="panel reveal" aria-hidden="true">
-          <div class="ph"><span>Novembro 2026</span><b>620 € de 900 €</b></div>
-          <div class="row"><span class="ic" style="background:rgba(96,165,250,.16);color:#60a5fa">🏠</span><div class="grow"><b>Casa</b><div class="bar2"><i style="width:86%;background:#60a5fa"></i></div></div><b>430 €</b></div>
-          <div class="row"><span class="ic" style="background:rgba(245,184,90,.16);color:#f5b85a">🛒</span><div class="grow"><b>Supermercado</b><div class="bar2"><i style="width:64%;background:#f5b85a"></i></div></div><b>128 €</b></div>
-          <div class="row"><span class="ic" style="background:rgba(139,147,255,.16);color:#8b93ff">⛽</span><div class="grow"><b>Combustível</b><div class="bar2"><i style="width:41%;background:#8b93ff"></i></div></div><b>62 €</b></div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ======================================================= em todo o lado / para todos -->
-  <section>
+  <!-- ======================================================= como funciona -->
+  <section id="funcoes" class="steps-sec">
     <div class="wrap">
       <div class="head-center reveal">
-        <span class="eyebrow">Para todos, em todo o lado</span>
-        <h2>No bolso e no computador.</h2>
-        <p class="sub">Regista um café no telemóvel e vê o resumo do mês no computador. Com uma conta, tudo fica sincronizado.</p>
+        <span class="eyebrow">Como funciona</span>
+        <h2>Três passos. Nada mais.</h2>
       </div>
-      <div class="grid4">
-        <div class="card tile reveal"><div class="big">Aa</div><h3>Letra grande</h3><p>Texto legível e bom contraste, para qualquer pessoa.</p></div>
-        <div class="card tile reveal"><div class="big">?</div><h3>Visita guiada</h3><p>Mostra cada botão da app, sempre que quiseres.</p></div>
-        <div class="card tile reveal"><div class="big">5</div><h3>Idiomas</h3><p>Português (PT e BR), inglês, espanhol e francês.</p></div>
-        <div class="card tile reveal"><div class="big">€$</div><h3>Várias moedas</h3><p>Euros, dólares, reais e mais, na mesma app.</p></div>
+      <ol class="steps">
+        <li class="reveal"><span class="st-n">1</span><b>Regista</b><small>Toca no +, escreve o valor. Ou importa o extrato do banco e entra tudo de uma vez.</small></li>
+        <li class="reveal"><span class="st-n">2</span><b>Percebe</b><small>Vês para onde vai cada euro, por categoria e por dia, sem fazer contas.</small></li>
+        <li class="reveal"><span class="st-n">3</span><b>Planeia</b><small>A app diz se o próximo mês fecha bem e o que podes ajustar para te sobrar mais.</small></li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- ======================================================= funcionalidades -->
+  <section id="tudo" class="feat-sec">
+    <div class="wrap">
+      <div class="head-center reveal">
+        <span class="eyebrow">Tudo num só sítio</span>
+        <h2>O que a app faz por ti.</h2>
+        <p class="sub">Ferramentas simples para gastar melhor e juntar dinheiro. Sem folhas de cálculo.</p>
+      </div>
+      <div class="showcase frow reveal">
+        <div class="sc-tx">
+          <span class="bx-tag">Novo</span>
+          <h3>Sabe antes se o mês vai chegar.</h3>
+          <p>O Planeamento olha para o teu salário, as contas fixas, o dia a dia, as dívidas e as metas, e diz-te se o próximo mês fecha bem.</p>
+          <p>Se não fechar, mostra o que podes fazer, em três níveis: dos ajustes que quase não se notam às medidas mais fortes. Cada sugestão leva-te direto ao sítio certo.</p>
+        </div>
+        <div class="sc-vis" aria-hidden="true">
+          <div class="mini-plan">
+            <div class="mp-head"><span>Dezembro</span><b>Faltam 180 €</b></div>
+            <div class="mp-bar"><i class="a"></i><i class="b"></i><i class="c"></i><i class="d"></i></div>
+            <div class="mp-row ok"><span>Ajustes simples</span><b>+64 €/mês</b></div>
+            <div class="mp-row mid"><span>Mudanças moderadas</span><b>+398 €/mês</b></div>
+            <div class="mp-row hard"><span>Medidas mais fortes</span><b>+1 520 €/mês</b></div>
+          </div>
+        </div>
+      </div>
+      <div class="ftabs reveal">
+        <div class="ft-bar" role="tablist" aria-label="Funcionalidades"><span class="ft-pill" aria-hidden="true"></span><button type="button" role="tab" data-t="imp" class="on" aria-selected="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg><span>Registar</span></button><button type="button" role="tab" data-t="goal" aria-selected="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21a9 9 0 1 1 0-18 9 9 0 0 1 0 18zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8z"/></svg><span>Poupar</span></button><button type="button" role="tab" data-t="cut" aria-selected="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6l12 12M6 18L18 6"/></svg><span>Cortar</span></button><button type="button" role="tab" data-t="share" aria-selected="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM22 21v-2a4 4 0 0 0-3-3.9M16 3.1a4 4 0 0 1 0 7.8"/></svg><span>Partilhar</span></button></div>
+        <div class="ft-panels">
+      <div role="tabpanel" data-p="imp" class="frow r-imp on">
+        <div class="fr-tx">
+          <span class="fr-lab">Registar</span>
+          <h3>Sem escrever despesa a despesa.</h3>
+          <p>Toca no + e regista um gasto em segundos. Ou importa o extrato do banco: as despesas entram todas de uma vez, já com categoria.</p>
+          <ul><li><svg><use href="#i-check"/></svg><span>CSV, Excel, OFX ou PDF</span></li><li><svg><use href="#i-check"/></svg><span>O ficheiro é lido no teu aparelho</span></li></ul>
+        </div>
+        <div class="fr-vis" aria-hidden="true"><div class="mini-files"><span>extrato.csv</span><span>novembro.xlsx</span><span>fatura.pdf</span></div>
+          <div class="v-rows"><div><b>Pingo Doce</b><small>Supermercado</small><em>−42,10 €</em></div><div><b>Galp</b><small>Combustível</small><em>−55,60 €</em></div><div><b>Salário</b><small>Rendimento</small><em class="in">+1450 €</em></div></div></div>
+      </div>
+      <div role="tabpanel" data-p="goal" class="frow rev r-goal">
+        <div class="fr-tx">
+          <span class="fr-lab">Poupar</span>
+          <h3>Junta dinheiro para o que queres.</h3>
+          <p>Cria uma meta (férias, carro, emergências) e a app diz-te quando lá chegas ao teu ritmo. Os limites avisam-te antes de gastares demais numa categoria.</p>
+          <ul><li><svg><use href="#i-check"/></svg><span>Previsão da data da meta</span></li><li><svg><use href="#i-check"/></svg><span>Avisos antes de passares o limite</span></li></ul>
+        </div>
+        <div class="fr-vis" aria-hidden="true"><div class="v-goal"><div class="mini-ring"><i></i><b>68%</b><small>Férias</small></div><div class="mini-lims"><div><span>Supermercado</span><i style="--w:64%"></i></div><div><span>Restaurantes</span><i class="w" style="--w:88%"></i></div></div></div></div>
+      </div>
+      <div role="tabpanel" data-p="cut" class="frow r-cut">
+        <div class="fr-tx">
+          <span class="fr-lab">Cortar</span>
+          <h3>Descobre o que podias deixar de pagar.</h3>
+          <p>Vês todas as subscrições e pagamentos fixos num só sítio. Liga os que podias cortar e vês logo quanto poupavas por mês e por ano.</p>
+          <ul><li><svg><use href="#i-check"/></svg><span>Subscrições detetadas sozinhas</span></li><li><svg><use href="#i-check"/></svg><span>Simula uma compra antes de a fazer</span></li></ul>
+        </div>
+        <div class="fr-vis" aria-hidden="true"><div class="mini-sw"><div><span>Netflix</span><i class="on"></i></div><div><span>Spotify</span><i class="on"></i></div><div><span>Ginásio</span><i></i></div></div>
+          <div class="v-save"><small>Podias poupar</small><b>+20,98 €/mês</b></div></div>
+      </div>
+      <div role="tabpanel" data-p="share" class="frow rev r-share">
+        <div class="fr-tx">
+          <span class="fr-lab">Partilhar</span>
+          <h3>Contas divididas e avisos a tempo.</h3>
+          <p>Divide jantares, férias ou as despesas da casa: cada um vê a sua parte e quem já pagou. E a app avisa-te dos pagamentos que estão a chegar.</p>
+          <ul><li><svg><use href="#i-check"/></svg><span>Grupos com quem quiseres</span></li><li><svg><use href="#i-check"/></svg><span>Avisos de pagamentos e limites</span></li></ul>
+        </div>
+        <div class="fr-vis" aria-hidden="true"><div class="mini-grp"><span>A</span><span>R</span><span>M</span><em>3 pessoas · 42 € cada</em></div>
+          <div class="mini-note"><i></i><span>Renda · daqui a 3 dias</span></div></div>
+      </div>
+        </div>
+        <div class="ft-prog" aria-hidden="true"><i></i></div>
+      </div>
+      <div class="feat-cta reveal">
+        <p>Experimenta grátis. Funciona sem conta e não pede o banco.</p>
+        <a class="store" href="#descarregar"><svg><use href="#i-win"/></svg><span><small>Descarregar para</small><b>Windows ou Android</b></span></a>
       </div>
     </div>
   </section>
 
   <!-- ======================================================= privacidade -->
-  <section id="privacidade">
+  <section id="privacidade" class="priv-sec">
     <div class="wrap">
-      <div class="head-center reveal">
-        <span class="eyebrow">Privacidade</span>
-        <h2>O teu dinheiro, os teus dados.</h2>
-        <p class="sub">Nunca te pedimos o acesso ao banco. Tu decides onde ficam os teus dados.</p>
-      </div>
-      <div class="grid3">
-        <div class="card reveal">
-          <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 2h10a1 1 0 0 1 1 1v18a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1zM11 18h2"/></svg></div>
-          <h3>Guardado no teu aparelho</h3><p>Funciona sem conta. Os dados ficam só contigo.</p>
-        </div>
-        <div class="card reveal">
-          <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6zM9 12l2 2 4-4"/></svg></div>
-          <h3>Sincronização segura</h3><p>Com conta, só tu acedes aos teus dados, em todos os aparelhos.</p>
-        </div>
-        <div class="card reveal">
-          <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12M7 10l5 5 5-5M5 21h14"/></svg></div>
-          <h3>Exportar e apagar</h3><p>Leva uma cópia quando quiseres, ou apaga a conta com um toque.</p>
-        </div>
+      <div class="priv reveal">
+        <div class="priv-h"><span class="eyebrow">Privacidade</span><h2>O teu dinheiro, os teus dados.</h2></div>
+        <ul>
+          <li><svg><use href="#i-check"/></svg><span><b>Sem ligar o banco.</b> Nunca pedimos as tuas credenciais.</span></li>
+          <li><svg><use href="#i-check"/></svg><span><b>Funciona sem conta.</b> Os dados ficam no teu aparelho.</span></li>
+          <li><svg><use href="#i-check"/></svg><span><b>Os extratos não saem do aparelho.</b> São lidos aí mesmo.</span></li>
+          <li><svg><use href="#i-check"/></svg><span><b>Exportas ou apagas</b> tudo quando quiseres.</span></li>
+        </ul>
       </div>
     </div>
   </section>
@@ -435,10 +568,10 @@
         <h2>Tens dúvidas?</h2>
       </div>
       <div class="faq">
-        <details><summary>O FuturePal liga-se à minha conta do banco?</summary><p>Não. Registas os movimentos tu, ou importas o extrato que descarregas do banco. Nunca te pedimos as credenciais do banco.</p></details>
+        <details><summary>O MyFuturePal liga-se à minha conta do banco?</summary><p>Não. Registas os movimentos tu, ou importas o extrato que descarregas do banco. Nunca te pedimos as credenciais do banco.</p></details>
         <details><summary>Preciso de criar conta?</summary><p>Não. Podes usar a app sem conta, e os dados ficam só no teu aparelho. A conta só serve para sincronizar entre o telemóvel e o computador.</p></details>
         <details><summary>Quanto custa?</summary><p>Podes começar grátis. O plano Plus junta funcionalidades extra, como o assistente com IA.</p></details>
-        <details><summary>O FuturePal dá conselhos de investimento?</summary><p>Não. O FuturePal ajuda-te a organizar despesas e poupanças, mas não presta aconselhamento financeiro.</p></details>
+        <details><summary>O MyFuturePal dá conselhos de investimento?</summary><p>Não. O MyFuturePal ajuda-te a organizar despesas e poupanças, mas não presta aconselhamento financeiro.</p></details>
         <details><summary>Posso levar os meus dados para outro telemóvel?</summary><p>Sim. Com conta, aparecem sozinhos. Sem conta, exportas uma cópia de segurança e importas no aparelho novo.</p></details>
       </div>
     </div>
@@ -448,22 +581,22 @@
   <section id="descarregar">
     <div class="wrap">
       <div class="final reveal">
-        <span class="eyebrow">Já disponível no Windows</span>
+        <span class="eyebrow">Windows e Android</span>
         <h2 data-i18n-html="final">Começa hoje a poupar<br>para o teu <span class="accent">futuro</span>.</h2>
-        <p class="sub">Descarrega o FuturePal e percebe, ainda este mês, para onde vai o teu dinheiro.</p>
+        <p class="sub">Descarrega o MyFuturePal e percebe, ainda este mês, para onde vai o teu dinheiro.</p>
         <div class="stores">
           <a class="store" href="https://github.com/therealsyk/futurepal/releases/latest" rel="noopener">
             <svg><use href="#i-win"/></svg><span><small>Descarregar para</small><b>Windows</b></span>
           </a>
-          <a class="store off" href="#descarregar" aria-disabled="true">
-            <svg><use href="#i-play"/></svg><span><small>Brevemente no</small><b>Google Play</b></span>
+          <a class="store" href="https://github.com/therealsyk/futurepal/releases/latest" rel="noopener">
+            <svg><use href="#i-play"/></svg><span><small>Descarregar para</small><b>Android</b></span>
           </a>
           <a class="store off" href="#descarregar" aria-disabled="true">
-            <svg><use href="#i-phone"/></svg><span><small>Brevemente na</small><b>App Store</b></span>
+            <svg><use href="#i-phone"/></svg><span><small>Brevemente na</small><b>App Store</b></span><em class="tag">iOS</em>
           </a>
         </div>
         <div class="stats">
-          <div><b>3</b><span>Plataformas</span></div>
+          <div><b>3 s</b><span>Para registar um gasto</span></div>
           <div><b>5</b><span>Idiomas</span></div>
           <div><b>Grátis</b><span>Para começar</span></div>
         </div>
@@ -474,9 +607,9 @@
 
 <footer>
   <div class="wrap">
-    <a class="logo" href="#inicio"><img src="brand/futurepal-icon.svg" alt="" width="30" height="30">FuturePal</a>
-    <nav aria-label="Rodapé"><a href="#funcoes">Funcionalidades</a><a href="#privacidade">Privacidade</a><a href="#perguntas">Perguntas</a></nav>
-    <p>© <span id="year">2026</span> FuturePal. Não presta aconselhamento nem serviços financeiros.</p>
+    <a class="logo" href="#inicio"><img src="brand/futurepal-icon.svg" alt="" width="30" height="30">MyFuturePal</a>
+    <nav aria-label="Rodapé"><a href="#tudo">Funcionalidades</a><a href="#privacidade">Privacidade</a><a href="#perguntas">Perguntas</a></nav>
+    <p>© <span id="year">2026</span> MyFuturePal. Não presta aconselhamento nem serviços financeiros.</p>
   </div>
 </footer>
 
@@ -527,7 +660,7 @@
       [].forEach.call(menu.querySelectorAll('button'), function (b) { b.setAttribute('aria-selected', String(b.dataset.code === code)); });
       try { localStorage.setItem('fp.lang', code); } catch (e) {}
       var fr = document.getElementById('demo');
-      if (fr) { var want = 'demo/index.html?lang=' + code; if (fr.getAttribute('src') !== want) fr.setAttribute('src', want); }
+      if (fr) { var want = 'demo/index.html?lang=' + code; if (fr.getAttribute('src') !== want) { fr.setAttribute('src', want); if (window.FP_DEMO_LANG) window.FP_DEMO_LANG(code); } }
     }
 
     var box = document.getElementById('lang'), btn = box.querySelector('.lang-btn'), menu = box.querySelector('.lang-menu');
@@ -553,21 +686,87 @@
     document.getElementById('descarregar').scrollIntoView({ behavior: 'smooth' });
     var b = document.querySelector('#descarregar .store'); if (b) { b.classList.remove('pulse'); void b.offsetWidth; b.classList.add('pulse'); }
   });
-  // Demonstração: telemóvel (desenhada a 390 px) ou computador (1280 px), reduzida para caber na moldura.
+  // Demonstração: duas molduras (telemóvel a 390 px e computador a 1920 px). Cada iframe carrega na sua largura real,
+  // por isso a app abre logo no modo certo; ao trocar só se mostra a outra (sem a app se redesenhar num tamanho errado).
   (function () {
-    var sc = document.querySelector('.screen'), hero = document.querySelector('.hero'); if (!sc) return;
-    var base = function () { return hero.classList.contains("pc") ? 1920 : 390; };
-    var fit = function () { sc.style.setProperty('--k', String(sc.clientWidth / base())); };
+    var hero = document.querySelector('.hero'), ph = document.querySelector('.screen.ph'), pcs = document.querySelector('.screen.pcs');
+    if (!ph || !pcs) return;
+    var fit = function () {
+      ph.style.setProperty('--k', String(ph.clientWidth / 390));
+      pcs.style.setProperty('--k', String((pcs.clientWidth || ph.closest('.phone').clientWidth) / 1920));
+    };
+    var lang = function () { var f = document.getElementById('demo'); var m = /lang=(\w+)/.exec(f.getAttribute('src') || ''); return m ? m[1] : 'pt'; };
+    var ensurePc = function (done) {
+      var f = pcs.querySelector('iframe');
+      if (f) { done(); return; }
+      f = document.createElement('iframe');
+      f.id = 'demo-pc'; f.title = 'Demonstração interativa da app MyFuturePal (computador)';
+      f.addEventListener('load', function () { pcs.classList.add('ready'); done(); }, { once: true });
+      f.src = 'demo/index.html?lang=' + lang();
+      pcs.appendChild(f);
+    };
     var btns = document.querySelectorAll('.dev-switch button');
+    var swap = function (pc, b) {
+      [].forEach.call(btns, function (x) { var on = x === b; x.classList.toggle('on', on); x.setAttribute('aria-pressed', String(on)); });
+      hero.classList.toggle('pc', pc);
+      ph.classList.toggle('on', !pc); pcs.classList.toggle('on', pc);
+      fit();
+    };
     [].forEach.call(btns, function (b) {
       b.addEventListener('click', function () {
         var pc = b.dataset.dev === 'pc';
-        hero.classList.toggle('pc', pc);
-        [].forEach.call(btns, function (x) { var on = x === b; x.classList.toggle('on', on); x.setAttribute('aria-pressed', String(on)); });
-        fit();
+        if (b.classList.contains('on')) return;
+        if (pc) ensurePc(function () { requestAnimationFrame(fit); });
+        var go = function () { swap(pc, b); };
+        // transição suave entre os dois modos (quando o browser deixa); senão, fade simples
+        if (document.startViewTransition && !matchMedia('(prefers-reduced-motion: reduce)').matches) document.startViewTransition(go); else go();
+        // a demonstração fica logo à vista, sem ter de fazer scroll
+        setTimeout(function () { var w = document.querySelector('.phone-wrap'); var r = w.getBoundingClientRect(); var y = window.scrollY + r.top - (r.height + 84 < innerHeight ? (innerHeight - r.height) / 2 : 84); document.documentElement.style.scrollBehavior = 'auto'; window.scrollTo({ top: Math.max(0, y), behavior: 'smooth' }); setTimeout(function () { document.documentElement.style.scrollBehavior = ''; }, 900); }, 520);
       });
     });
+    window.FP_DEMO_LANG = function (code) { var f = pcs.querySelector('iframe'); if (f) f.src = 'demo/index.html?lang=' + code; };
     fit(); window.addEventListener('resize', fit);
+    if ('ResizeObserver' in window) new ResizeObserver(function () { fit(); }).observe(ph.closest('.phone')); // a moldura mudou de tamanho: volta a encaixar a app
+  })();
+  // Funcionalidades em separadores: roda sozinho a cada 7 s até a pessoa escolher um.
+  (function () {
+    var box = document.querySelector('.ftabs'); if (!box) return;
+    var btns = [].slice.call(box.querySelectorAll('.ft-bar button')), panels = box.querySelectorAll('[data-p]'), pill = box.querySelector('.ft-pill');
+    var i = 0, timer = null, manual = false;
+    var show = function (n) {
+      i = (n + btns.length) % btns.length; var k = btns[i].dataset.t;
+      btns.forEach(function (b, j) { b.classList.toggle('on', j === i); b.setAttribute('aria-selected', String(j === i)); });
+      [].forEach.call(panels, function (p) { p.classList.toggle('on', p.dataset.p === k); });
+      var b = btns[i]; pill.style.width = b.offsetWidth + 'px'; pill.style.transform = 'translateX(' + b.offsetLeft + 'px)';
+      box.classList.remove('run'); void box.offsetWidth; if (!manual) box.classList.add('run');
+    };
+    btns.forEach(function (b, j) { b.addEventListener('click', function () { manual = true; clearInterval(timer); show(j); }); });
+    var start = function () { if (manual || timer) return; timer = setInterval(function () { show(i + 1); }, 7000); };
+    if ('IntersectionObserver' in window) new IntersectionObserver(function (es) { es.forEach(function (e) { if (e.isIntersecting) { start(); box.classList.add('run'); } else { clearInterval(timer); timer = null; } }); }, { threshold: .4 }).observe(box);
+    window.addEventListener('resize', function () { show(i); });
+    show(0);
+  })();
+  // Ao fazer scroll, as caixas afundam ligeiramente (menores, mais escuras e desfocadas) quando saem do ecrã.
+  (function () {
+    if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    var els = [].slice.call(document.querySelectorAll('.steps li, .showcase, .ftabs, .feat-cta, .priv, .faq details, .final'));
+    els.forEach(function (el) { el.classList.add('sink'); });
+    var tick = false;
+    var run = function () {
+      tick = false;
+      var vh = innerHeight;
+      els.forEach(function (el) {
+        var r = el.getBoundingClientRect(), p = 0;
+        if (r.bottom < 0 || r.top > vh) return;
+        var topEdge = 90, out = topEdge - r.top;               // a sair por cima
+        if (out > 0) p = Math.min(1, out / Math.max(260, r.height * .9));
+        var inn = r.top - (vh - 60);                           // a entrar por baixo
+        if (inn > 0) p = Math.max(p, Math.min(1, inn / 160) * .6);
+        el.style.setProperty('--sk', p.toFixed(3));
+      });
+    };
+    var on = function () { if (!tick) { tick = true; requestAnimationFrame(run); } };
+    addEventListener('scroll', on, { passive: true }); addEventListener('resize', on); run();
   })();
   // Topo transparente que ganha fundo ao fazer scroll.
   (function () {

@@ -2,127 +2,14 @@
 <html lang="pt-PT">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex, nofollow">
-<title>FuturePal · Administração</title>
+<meta http-equiv="refresh" content="0; url=admin/">
+<title>MyFuturePal · Administração</title>
 <link rel="icon" type="image/svg+xml" href="favicon.svg">
-<style>
-  :root { --bg: #0b1416; --card: #142427; --card2: #1b2f33; --text: #eef6f6; --muted: #a9bcbe; --line: rgba(255,255,255,.08); --brand: #17c3c9; --ink: #032a2d; --warn: #f5b85a; --red: #f87171; }
-  * { box-sizing: border-box; }
-  body { margin: 0; background: var(--bg); color: var(--text); font: 15px/1.5 "Segoe UI", system-ui, sans-serif; }
-  .wrap { width: min(1100px, 100% - 32px); margin: 0 auto; padding: 24px 0 60px; }
-  header { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; }
-  header img { width: 36px; height: 36px; border-radius: 10px; } header h1 { margin: 0; font-size: 22px; flex: 1; }
-  .card { background: var(--card); border: 1px solid var(--line); border-radius: 20px; padding: 18px; margin-bottom: 12px; }
-  .card h2 { margin: 0 0 10px; font-size: 16px; }
-  .kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 10px; margin-bottom: 12px; }
-  .kpi { background: var(--card); border: 1px solid var(--line); border-radius: 18px; padding: 14px; } .kpi small { color: var(--muted); display: block; } .kpi b { font-size: 26px; }
-  .two { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; } @media (max-width: 700px) { .two { grid-template-columns: 1fr; } }
-  .bars { display: flex; align-items: flex-end; gap: 3px; height: 120px; } .bars i { flex: 1; min-height: 2px; border-radius: 4px 4px 0 0; background: var(--brand); }
-  .kv { display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid var(--line); }
-  .tbl { overflow-x: auto; } table { width: 100%; border-collapse: collapse; } th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--line); white-space: nowrap; } th { color: var(--muted); font-weight: 600; }
-  input, select, button { font: inherit; } input, select { width: 100%; padding: 11px 13px; border-radius: 12px; border: 1px solid var(--line); background: var(--card2); color: var(--text); }
-  label { display: block; margin-bottom: 10px; } label span { display: block; color: var(--muted); font-size: 13px; margin-bottom: 4px; }
-  .btn { height: 44px; padding: 0 18px; border-radius: 12px; border: 1px solid var(--line); background: var(--card2); color: var(--text); font-weight: 700; cursor: pointer; }
-  .btn.main { background: var(--brand); color: var(--ink); border-color: transparent; }
-  .login { max-width: 380px; margin: 10vh auto; } .row { display: flex; gap: 8px; flex-wrap: wrap; }
-  .err { color: var(--red); } .muted { color: var(--muted); font-size: 13px; } .hidden { display: none; }
-</style>
+<style>body { margin: 0; background: #0a0a0d; }</style>
 </head>
 <body>
-<div class="wrap">
-  <header><img src="favicon.svg" alt=""><h1>FuturePal · Administração</h1><button class="btn hidden" id="logout">Sair</button></header>
-
-  <section id="login" class="card login">
-    <h2>Entrar</h2>
-    <label><span>Email</span><input id="email" type="email" autocomplete="username"></label>
-    <label><span>Palavra-passe</span><input id="pass" type="password" autocomplete="current-password"></label>
-    <div class="row"><button class="btn main" id="go">Entrar</button><button class="btn" id="google">Entrar com Google</button></div>
-    <p class="err" id="loginErr"></p>
-    <p class="muted">Só contas de administrador veem os dados. Esta página não aparece nos motores de busca.</p>
-  </section>
-
-  <section id="panel" class="hidden">
-    <p class="err" id="err"></p>
-    <div class="kpis" id="kpis"></div>
-    <div class="card"><h2>Registos por dia (30 dias)</h2><div class="bars" id="bars"></div></div>
-    <div class="two"><div class="card"><h2>Forma de entrada</h2><div id="providers"></div></div><div class="card"><h2>Idiomas</h2><div id="languages"></div></div></div>
-    <div class="card"><h2>Últimas contas criadas</h2><div class="tbl"><table><thead><tr><th>Email</th><th>Criada</th><th>Último acesso</th><th>Entrada</th><th>Transações</th></tr></thead><tbody id="users"></tbody></table></div></div>
-    <div class="card">
-      <h2>Versões publicadas</h2><div id="versions"></div>
-      <div class="two" style="margin-top:10px">
-        <label><span>Plataforma</span><select id="vPlat"><option>windows</option><option>android</option><option>ios</option><option>web</option></select></label>
-        <label><span>Versão nova</span><input id="vVer" placeholder="0.2.0"></label>
-        <label><span>Versão mínima</span><input id="vMin" placeholder="0.0.0"></label>
-        <label><span>Link de download</span><input id="vUrl" placeholder="https://"></label>
-      </div>
-      <label><span>Novidades</span><input id="vNotes"></label>
-      <button class="btn main" id="publish">Publicar aviso de versão</button>
-    </div>
-    <p class="muted">Só vês contagens e emails, nunca os valores das despesas. Trata estes dados com cuidado (RGPD).</p>
-  </section>
-</div>
-
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
-<script>
-  // Endereço e chave PÚBLICA do Supabase (a mesma que vai dentro da app). A segurança está nas funções do supabase/admin.sql.
-  var SUPABASE_URL = 'https://ataewlsrevvgvfhwttwf.supabase.co';
-  var SUPABASE_KEY = 'sb_publishable_tzb-BPza7q1Mcf0KUL9cIQ_NMSOmhum';
-  var sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-  var $ = function (id) { return document.getElementById(id); };
-  var esc = function (s) { return String(s == null ? '' : s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); };
-  var d = function (s) { return s ? new Date(s).toLocaleDateString('pt-PT') : '—'; };
-
-  async function show() {
-    var s = (await sb.auth.getSession()).data.session;
-    $('login').classList.toggle('hidden', !!s); $('panel').classList.toggle('hidden', !s); $('logout').classList.toggle('hidden', !s);
-    if (!s) return;
-    var adm = await sb.rpc('is_admin');
-    if (adm.data !== true) { $('err').textContent = 'Esta conta não é administradora.'; return; }
-    var r = await Promise.all([sb.rpc('admin_stats'), sb.rpc('admin_users', { max_rows: 100 }), sb.from('app_versions').select('*').order('platform')]);
-    if (r[0].error) { $('err').textContent = r[0].error.message; return; }
-    var st = r[0].data, labels = [['users_total', 'Contas'], ['users_7d', 'Novas (7 dias)'], ['active_7d', 'Ativas (7 dias)'], ['active_30d', 'Ativas (30 dias)'], ['with_data', 'Contas com dados'], ['unconfirmed', 'Email por confirmar'], ['tx_total', 'Transações'], ['tx_30d', 'Transações (30 dias)'], ['accounts_total', 'Contas financeiras'], ['goals_total', 'Metas']];
-    $('kpis').innerHTML = labels.map(function (l) { return '<div class="kpi"><small>' + l[1] + '</small><b>' + esc(st[l[0]]) + '</b></div>'; }).join('');
-    var max = Math.max.apply(null, [1].concat(st.signups_by_day.map(function (x) { return x.n; })));
-    $('bars').innerHTML = st.signups_by_day.map(function (x) { return '<i title="' + esc(x.day + ': ' + x.n) + '" style="height:' + (x.n / max * 100) + '%"></i>'; }).join('');
-    var kv = function (o) { return Object.keys(o).map(function (k) { return '<div class="kv"><span>' + esc(k) + '</span><b>' + esc(o[k]) + '</b></div>'; }).join(''); };
-    $('providers').innerHTML = kv(st.providers); $('languages').innerHTML = kv(st.languages);
-    $('users').innerHTML = (r[1].data || []).map(function (u) { return '<tr><td>' + esc(u.email) + (u.confirmed ? '' : ' <small style="color:var(--warn)">· por confirmar</small>') + '</td><td>' + d(u.created_at) + '</td><td>' + d(u.last_sign_in_at) + '</td><td>' + esc(u.provider) + '</td><td>' + esc(u.tx_count) + '</td></tr>'; }).join('');
-    // As versões publicadas acompanham sozinhas a última release do GitHub (Windows e Android).
-    var vrows = r[2].data || [];
-    try {
-      var gh = await (await fetch('https://api.github.com/repos/therealsyk/futurepal/releases/latest')).json();
-      if (gh && gh.tag_name && !gh.draft && !gh.prerelease) {
-        var ver = gh.tag_name.replace(/^v/i, ''), notes = (gh.body || '').split('\n').map(function (l) { return l.replace(/^[-*#\s]+/, '').trim(); }).filter(Boolean).join(' · ').slice(0, 300);
-        var apk = (gh.assets || []).filter(function (a) { return /\.apk$/i.test(a.name); })[0];
-        var hasWin = (gh.assets || []).some(function (a) { return a.name === 'latest.yml'; });
-        var cmp = function (a, b) { var x = a.split('.').map(Number), y = b.split('.').map(Number); for (var i = 0; i < 3; i++) { if ((x[i] || 0) !== (y[i] || 0)) return (x[i] || 0) - (y[i] || 0); } return 0; };
-        var targets = []; if (hasWin) targets.push(['windows', 'https://github.com/therealsyk/futurepal/releases/latest']); if (apk) targets.push(['android', apk.browser_download_url]);
-        var changed = false;
-        for (var i = 0; i < targets.length; i++) {
-          var row = vrows.filter(function (v) { return v.platform === targets[i][0]; })[0];
-          if (row && cmp(ver, row.latest_version) <= 0) continue;
-          var e = await sb.rpc('admin_set_version', { p_platform: targets[i][0], p_version: ver, p_min: row ? row.min_version : '', p_notes: notes, p_url: targets[i][1] });
-          if (!e.error) changed = true;
-        }
-        if (changed) vrows = (await sb.from('app_versions').select('*').order('platform')).data || vrows;
-      }
-    } catch (err) { /* sem internet: fica o que está no Supabase */ }
-    $('versions').innerHTML = vrows.map(function (v) { return '<div class="kv"><span>' + esc(v.platform) + '</span><b>' + esc(v.latest_version) + '</b><small class="muted">' + d(v.published_at) + '</small></div>'; }).join('');
-  }
-
-  $('go').onclick = async function () {
-    var r = await sb.auth.signInWithPassword({ email: $('email').value.trim(), password: $('pass').value });
-    $('loginErr').textContent = r.error ? 'Não foi possível entrar: ' + r.error.message : ''; show();
-  };
-  $('google').onclick = function () { sb.auth.signInWithOAuth({ provider: 'google', options: { redirectTo: location.href.split('#')[0] } }); };
-  $('logout').onclick = async function () { await sb.auth.signOut(); show(); };
-  $('publish').onclick = async function () {
-    var r = await sb.rpc('admin_set_version', { p_platform: $('vPlat').value, p_version: $('vVer').value.trim(), p_min: $('vMin').value.trim(), p_notes: $('vNotes').value.trim(), p_url: $('vUrl').value.trim() });
-    $('err').textContent = r.error ? r.error.message : ''; if (!r.error) show();
-  };
-  sb.auth.onAuthStateChange(function () { show(); });
-  show();
-</script>
+<!-- O painel de administração do website é o mesmo da app: está em admin/ (gerado com `npm run admin:build` na pasta app). -->
+<script>location.replace('admin/' + location.hash);</script>
 </body>
 </html>
